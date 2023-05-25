@@ -46,10 +46,8 @@ export async function logOut(req, res) {
     const token = authorization?.replace('Bearer ', '');
     if(!token) return res.sendStatus(401);
     try {
-        // const tokenExists = Jwt.verify(token, process.env.JWT_SECRET);
-
-        const tokenExists = await tokenExistsDB(token);
-        if (tokenExists.rowCount !== 0) return res.status(401).send("Usuário já deslogado!");
+        const tokenActive = await tokenExistsDB(token);
+        if (tokenActive.rowCount !== 0) return res.status(401).send("Usuário já deslogado!");
 
         await logoutDB(token);
         res.send("Usuário deslogado com sucesso!")
