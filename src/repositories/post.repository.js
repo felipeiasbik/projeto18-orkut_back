@@ -18,6 +18,11 @@ export function myPostsDB(userId){
     return result;
 }
 
+export function myPostsIdDB(id, userId){
+    const result = db.query(`SELECT * FROM post WHERE id = $1 AND "userId" = $2;`, [id, userId.idUser]);
+    return result;
+}
+
 export function listPostsDB(){
     const result = db.query(`SELECT * FROM post ORDER BY "createdAt" DESC;`);
     return result;

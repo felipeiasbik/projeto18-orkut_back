@@ -1,4 +1,4 @@
-import { listPostsDB, myPostsDB, postImageDB, tokenExistsDB } from "../repositories/post.repository.js";
+import { listPostsDB, myPostsDB, myPostsIdDB, postImageDB, tokenExistsDB } from "../repositories/post.repository.js";
 import Jwt from "jsonwebtoken";
 
 export async function postImage(req, res){
@@ -22,7 +22,7 @@ export async function postImage(req, res){
     }
 }
 
-export async function myPostId(req, res){
+export async function myPost(req, res){
     const { authorization } = req.headers;
     const token = authorization?.replace('Bearer ', '');
     if(!token) return res.sendStatus(401);
@@ -35,6 +35,28 @@ export async function myPostId(req, res){
         const postsUser = await myPostsDB(userId);
 
         res.send(postsUser.rows);
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+export async function myPostId(req, res){
+    const { id } = req.params;
+    const { authorization } = req.headers;
+    const token = authorization?.replace('Bearer ', '');
+    if(!token) return res.sendStatus(401);
+
+    try {
+        const tokenActive = await tokenExistsDB(token);
+        if (tokenActive.rowCount !== 0) return res.status(401).send("Usuário sem acesso permitido!");
+
+        const userId = Jwt.verify(token, process.env.JWT_SECRET);
+
+        const postsUser = await myPostsIdDB(id, userId);
+        if (postsUser.rowCount === 0)
+        return res.status(400).send("Postagem não pertence ao usuário ou não existe.")
+
+        res.send(postsUser.rows[0]);
     } catch (err) {
         res.status(500).send(err.message);
     }
