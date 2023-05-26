@@ -2,7 +2,7 @@ import { alreadyFollowDB, followUsersDB, myFollowersDB, tokenExistsDB, unfollowU
 import Jwt from "jsonwebtoken";
 
 export async function followUsers(req, res){
-    const { id } = req.params;
+    const { userFollowId } = req.body;
 
     const { authorization } = req.headers;
     const token = authorization?.replace('Bearer ', '');
@@ -14,15 +14,15 @@ export async function followUsers(req, res){
 
         const userId = Jwt.verify(token, process.env.JWT_SECRET);
         
-        if (Number(id) === userId.idUser) return res.status(401).send("Não é permitido seguir você próprio(a)!");
+        if (userFollowId === userId.idUser) return res.status(401).send("Não é permitido seguir você próprio(a)!");
 
-        const checkUser = await userExistsDB(Number(id));
+        const checkUser = await userExistsDB(userFollowId);
         if (checkUser.rowCount === 0) return res.status(401).send("O usuário que você quer seguir não existe.");
 
-        const alreadyFollow = await alreadyFollowDB(userId, Number(id));
+        const alreadyFollow = await alreadyFollowDB(userId, userFollowId);
         if (alreadyFollow.rowCount !== 0) return res.status(401).send("Você já segue o usuário.");
 
-        await followUsersDB(userId, Number(id));
+        await followUsersDB(userId, userFollowId);
 
         return res.send("Seguindo")
     } catch(err) {
@@ -31,7 +31,7 @@ export async function followUsers(req, res){
 }
 
 export async function deleteFollowUsers(req, res){
-    const { id } = req.params;
+    const { userFollowId } = req.body;
 
     const { authorization } = req.headers;
     const token = authorization?.replace('Bearer ', '');
@@ -43,15 +43,15 @@ export async function deleteFollowUsers(req, res){
 
         const userId = Jwt.verify(token, process.env.JWT_SECRET);
 
-        if (Number(id) === userId.idUser) return res.status(401).send("Você não segue você próprio(a)!");
+        if (userFollowId === userId.idUser) return res.status(401).send("Você não segue você próprio(a)!");
 
-        const checkUser = await userExistsDB(Number(id));
+        const checkUser = await userExistsDB(userFollowId);
         if (checkUser.rowCount === 0) return res.status(401).send("O usuário que você quer deixar de seguir não existe.");
 
-        const alreadyFollow = await alreadyFollowDB(userId, Number(id));
+        const alreadyFollow = await alreadyFollowDB(userId, userFollowId);
         if (alreadyFollow.rowCount === 0) return res.status(401).send("Você não segue o usuário.");
 
-        await unfollowUsersDB(userId, Number(id));
+        await unfollowUsersDB(userId, userFollowId);
 
         res.send("Deixando de seguir")
 
@@ -61,10 +61,10 @@ export async function deleteFollowUsers(req, res){
 }
 
 export async function myFollowersId(req, res){
-    const { id } = req.params;
+    const { userFollowId } = req.body;
 
     try {
-        const myFollowers = await myFollowersDB(Number(id));
+        const myFollowers = await myFollowersDB(userFollowId);
         
         res.send(myFollowers.rows[0]);
 

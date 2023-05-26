@@ -24,11 +24,11 @@ export async function signIn(req, res) {
     try {
         const user = await userExistsDB(email);
         if (user.rowCount === 0) return res.status(401).send
-        ("Erro: Verifique se o e-mail está cadastrado e/ou se a senha está correta");
+        ("Verifique se o e-mail está cadastrado e/ou se a senha está correta");
 
         const checkPass = bcrypt.compareSync(password, user.rows[0].password);
         if (!checkPass) return res.status(401).send
-        ("Erro: Verifique se o e-mail está cadastrado e/ou se a senha está correta");
+        ("Verifique se o e-mail está cadastrado e/ou se a senha está correta");
 
         if (user && checkPass){
             const payload = { idUser: user.rows[0].id };

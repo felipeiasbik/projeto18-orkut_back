@@ -33,12 +33,10 @@ export function unfollowUsersDB(userId, userFollowId){
 
 export function myFollowersDB(userFollowId){
     const result = db.query(`
-    SELECT 
-      COUNT(*)::INTEGER AS total,
-      JSON_AGG(u.name) AS followers
-    FROM followers f
-    JOIN users u ON f."userId" = u.id
-    WHERE f."userFollowId" = $1
+    SELECT
+        ARRAY_AGG(likes."postId") AS "postsIds"
+    FROM likes
+    WHERE "userId" = $1;
     ;`, [userFollowId]);
     return result;
 }
