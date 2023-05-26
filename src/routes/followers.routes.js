@@ -3,8 +3,8 @@ import { deleteFollowUsers, followUsers, myFollowersId } from "../controllers/fo
 
 const followersRouter = Router();
 
-followersRouter.post("/follow/:id", followUsers);
-followersRouter.delete("/follow/:id", deleteFollowUsers);
-followersRouter.get("/follow/:id", myFollowersId);
+followersRouter.get("/follow", myFollowersId);
+followersRouter.post("/follow", followUsers);
+followersRouter.delete("/follow", deleteFollowUsers);
 
 export default followersRouter;
