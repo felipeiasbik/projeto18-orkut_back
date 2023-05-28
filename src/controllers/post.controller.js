@@ -1,4 +1,4 @@
-import { listPostsDB, myPostsDB, myPostsIdDB, postImageDB, tokenExistsDB } from "../repositories/post.repository.js";
+import { listPostsDB, myPostsDB, myPostsIdDB, myPostsIdUserDB, postImageDB, tokenExistsDB } from "../repositories/post.repository.js";
 import Jwt from "jsonwebtoken";
 
 export async function postImage(req, res){
@@ -34,7 +34,7 @@ export async function myPost(req, res){
         const userId = Jwt.verify(token, process.env.JWT_SECRET);
         const postsUser = await myPostsDB(userId);
 
-        res.send(postsUser.rows);
+        res.send(postsUser.rows[0]);
     } catch (err) {
         res.status(500).send(err.message);
     }
@@ -50,11 +50,11 @@ export async function myPostId(req, res){
         const tokenActive = await tokenExistsDB(token);
         if (tokenActive.rowCount !== 0) return res.status(401).send("Usuário sem acesso permitido!");
 
-        const userId = Jwt.verify(token, process.env.JWT_SECRET);
-
-        const postsUser = await myPostsIdDB(id, userId);
-        if (postsUser.rowCount === 0)
-        return res.status(400).send("Postagem não pertence ao usuário ou não existe.")
+        let postsUser = await myPostsIdDB(id);
+        if (postsUser.rowCount === 0) {
+            postsUser = await myPostsIdUserDB(id);
+        }
+        // return res.status(400).send("Postagem não pertence ao usuário ou não existe.")
 
         res.send(postsUser.rows[0]);
     } catch (err) {

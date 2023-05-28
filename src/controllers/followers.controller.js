@@ -1,4 +1,4 @@
-import { alreadyFollowDB, followUsersDB, myFollowersDB, tokenExistsDB, unfollowUsersDB, userExistsDB } from "../repositories/followers.repository.js";
+import { alreadyFollowDB, followUsersDB, followingDB, myFollowersDB, tokenExistsDB, unfollowUsersDB, userExistsDB } from "../repositories/followers.repository.js";
 import Jwt from "jsonwebtoken";
 
 export async function followUsers(req, res){
@@ -61,13 +61,25 @@ export async function deleteFollowUsers(req, res){
 }
 
 export async function myFollowersId(req, res){
-    const { userFollowId } = req.body;
+    const { id } = req.params;
 
     try {
-        const myFollowers = await myFollowersDB(userFollowId);
+        const myFollowers = await myFollowersDB(id);
         
         res.send(myFollowers.rows[0]);
 
+    } catch (err) {
+        res.status(500).send(err.message);
+    }
+}
+
+export async function followingsId(req, res){
+    const { id } = req.params;
+
+    try {
+        const following = await followingDB(id);
+        
+        res.send(following.rows[0]);
     } catch (err) {
         res.status(500).send(err.message);
     }

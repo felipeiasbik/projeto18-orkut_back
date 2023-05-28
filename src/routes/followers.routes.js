@@ -1,9 +1,10 @@
 import { Router } from "express";
-import { deleteFollowUsers, followUsers, myFollowersId } from "../controllers/followers.controller.js";
+import { deleteFollowUsers, followUsers, followingsId, myFollowersId } from "../controllers/followers.controller.js";
 
 const followersRouter = Router();
 
-followersRouter.get("/follow", myFollowersId);
+followersRouter.get("/follow/:id", myFollowersId);
+followersRouter.get("/following/:id", followingsId);
 followersRouter.post("/follow", followUsers);
 followersRouter.delete("/follow", deleteFollowUsers);
 

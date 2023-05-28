@@ -34,7 +34,7 @@ export async function signIn(req, res) {
             const payload = { idUser: user.rows[0].id };
             const token = Jwt.sign(payload, process.env.JWT_SECRET);
 
-            res.send({token});
+            res.send({token, idUser: user.rows[0].id });
         }
     } catch (err) {
         res.status(500).send(err.message);
