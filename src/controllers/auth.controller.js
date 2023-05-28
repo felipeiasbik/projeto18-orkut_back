@@ -41,7 +41,7 @@ export async function signIn(req, res) {
     }
 }
 
-export async function logOut(req, res) {
+export async function logOut(req, res) {    
     const { authorization } = req.headers;
     const token = authorization?.replace('Bearer ', '');
     if(!token) return res.sendStatus(401);
