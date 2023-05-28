@@ -6,6 +6,6 @@ const followersRouter = Router();
 followersRouter.get("/follow/:id", myFollowersId);
 followersRouter.get("/following/:id", followingsId);
 followersRouter.post("/follow", followUsers);
-followersRouter.delete("/follow", deleteFollowUsers);
+followersRouter.delete("/follow/:id", deleteFollowUsers);
 
 export default followersRouter;

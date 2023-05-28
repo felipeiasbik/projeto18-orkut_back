@@ -17,6 +17,7 @@ export function myPostsDB(userId){
     const result = db.query(`
     WITH user_posts AS (
         SELECT
+            u.id,
             u.name,
             u.photo,
             u.biography,
@@ -93,9 +94,6 @@ export function myPostsIdDB(id){
         JOIN post p ON u.id = p."userId"
         WHERE p."userId" = $1
     ),
-
-
-
     post_likes AS (
         SELECT
             p.post_id,
@@ -128,6 +126,7 @@ export function myPostsIdDB(id){
         GROUP BY p.post_id
     )
     SELECT
+        up.id,
         up.name,
         up.photo,
         up.biography,
@@ -144,7 +143,7 @@ export function myPostsIdDB(id){
     FROM user_posts up
     LEFT JOIN post_likes pl ON up.post_id = pl.post_id
     LEFT JOIN post_comments pc ON up.post_id = pc.post_id
-    GROUP BY up.name, up.photo, up.biography;
+    GROUP BY up.id, up.name, up.photo, up.biography;
     `, [id]);
     return result;
 
