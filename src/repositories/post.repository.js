@@ -138,22 +138,15 @@ export function myPostsIdDB(id){
                 'createdAt', up.post_createdAt,
                 'likes', pl.likes,
                 'comments', pc.comments
-            )
+            )ORDER BY up.post_createdAt DESC
         ) AS posts
     FROM user_posts up
     LEFT JOIN post_likes pl ON up.post_id = pl.post_id
     LEFT JOIN post_comments pc ON up.post_id = pc.post_id
-    GROUP BY up.id, up.name, up.photo, up.biography;
+    GROUP BY up.id, up.name, up.photo, up.biography
+    ORDER BY MAX(up.post_createdAt) DESC;
     `, [id]);
     return result;
-
-    // const result = db.query(`
-    // SELECT * 
-    // FROM post 
-    // WHERE id = $1 AND "userId" = $2
-    // ORDER BY "createdAt" DESC;
-    // `, [id, userId.idUser]);
-    // return result;
 }
 
 export function myPostsIdUserDB(id){
@@ -162,7 +155,6 @@ export function myPostsIdUserDB(id){
 }
 
 export function listPostsDB(){
-    // const result = db.query(`SELECT * FROM post ORDER BY "createdAt" DESC;`);
     const result = db.query(`
     SELECT
         p.id,
@@ -200,72 +192,3 @@ export function listPostsDB(){
     `);
     return result;
 }
-
-
-// [
-//     {
-//       "nameUser": "Felipe Iasbik",
-//       "photoProfile": "https://drive.google.com/file/d/1YwEazsuPYGkwfHm4DU13UEe8TPzwKuge/view?usp=share_link",
-//       "biography": "Graduado em Administração de Empresas pela UNIPAC e atualmente curso o Bootcamp da Driven Education em Software Engineer. Sou casado, pai de menina e desenvolvedor Full Stack!",
-      
-//       "posts": [
-//             {
-//                 "id": 5,
-//                 "photo": "https://www.felizcomavida.com/wp-content/uploads/2020/10/como-ser-feliz-trabalhando-em-casa-1-1024x683.jpg",
-//                 "description": "Vão dizer que foi sorte!",
-//                 "createdAt": "2023-05-24T23:43:54.626Z",
-//                 "likes": null,
-//                 "comments": [
-//                 {
-//                     "commentId": null,
-//                     "userId": null,
-//                     "comment": null,
-//                     "userPhoto": null
-//                 }
-//                 ]
-//             },
-//             {
-//                 "id": 3,
-//                 "photo": "https://www.sesc-sc.com.br/sescsc/cache/imagens/institucional_imagem_pq_Institucional_id_8277.jpg",
-//                 "description": "De hoje tá pago!",
-//                 "createdAt": "2023-05-24T23:41:24.102Z",
-//                 "likes": [
-//                 "Felipe Iasbik"
-//                 ],
-//                 "comments": [
-//                 {
-//                     "commentId": null,
-//                     "userId": null,
-//                     "comment": null,
-//                     "userPhoto": null
-//                 }
-//                 ]
-//             },
-//             {
-//                 "id": 2,
-//                 "photo": "https://pat.feldman.com.br/wp-content/uploads/2012/01/comida-caseira.jpg",
-//                 "description": "Almoço de hoje!!!",
-//                 "createdAt": "2023-05-24T23:40:30.077Z",
-//                 "likes": [
-//                 "Felipe Iasbik",
-//                 "Jorge Vitor"
-//                 ],
-//                 "comments": [
-//                 {
-//                     "commentId": 1,
-//                     "userId": 2,
-//                     "comment": "Legal demais!",
-//                     "userPhoto": "https://media.istockphoto.com/id/125141451/pt/foto/caixa-de-%C3%B3culos-estudante-dando-uma-flor.jpg?s=612x612&w=0&k=20&c=OOkqhbdvSnOaouFkqbRDdx-IAspwU9AZc-nVUH3_EPQ="
-//                 },
-//                 {
-//                     "commentId": 2,
-//                     "userId": 3,
-//                     "comment": "Legal demais!",
-//                     "userPhoto": "https://i.pinimg.com/236x/65/54/47/6554470eeced7b9ff0098a5315852a75.jpg"
-//                 }
-//                 ]
-//             }
-//         ]
-    
-//     }
-// ]
