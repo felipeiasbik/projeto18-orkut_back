@@ -33,10 +33,54 @@ export function unfollowUsersDB(userId, userFollowId){
 
 export function myFollowersDB(userFollowId){
     const result = db.query(`
+
+
     SELECT
-        ARRAY_AGG(likes."postId") AS "postsIds"
-    FROM likes
-    WHERE "userId" = $1;
-    ;`, [userFollowId]);
+        users.name,
+        users.id,
+        users.photo,
+        users.biography,
+        (
+            SELECT JSON_AGG(
+                JSON_BUILD_OBJECT(
+                    'id', users.id,
+                    'name', users.name,
+                    'photo', users.photo
+                )
+            )
+            FROM users
+            JOIN followers ON followers."userFollowId" = users.id
+            WHERE followers."userId" = $1
+        ) AS "myFollowers"
+    FROM users
+    WHERE users.id = $1;
+
+   
+    `, [userFollowId]);
+    return result;
+}
+
+export function followingDB(id){
+    const result = db.query(`
+    SELECT
+        users.name,
+        users.id,
+        users.photo,
+        users.biography,
+        (
+            SELECT JSON_AGG(
+                JSON_BUILD_OBJECT(
+                    'id', users.id,
+                    'name', users.name,
+                    'photo', users.photo
+                )
+            )
+            FROM users
+            JOIN followers ON followers."userId" = users.id
+            WHERE followers."userFollowId" = $1
+        ) AS following
+    FROM users
+    WHERE users.id = $1;
+    ;`,[id]);
     return result;
 }
