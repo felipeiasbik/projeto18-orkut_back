@@ -22,6 +22,7 @@ export function getCommentsId(postId){
     FROM comments c
     JOIN users u ON u.id = c."userId"
     WHERE c."postId" = $1
+    ORDER BY c."createdAt" DESC
     ;`, [postId]);
     return result;
 }

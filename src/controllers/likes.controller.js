@@ -1,8 +1,8 @@
-import { checkLikeDB, checkLikesUserDB, dislikePostDB, likePostDB, postExistsDB, tokenExistsDB } from "../repositories/likes.repository.js";
+import { checkLikeDB, checkLikesUserDB, dislikePostDB, insertTrueFalseDB, likePostDB, postExistsDB, tokenExistsDB } from "../repositories/likes.repository.js";
 import Jwt from "jsonwebtoken";
 
 export async function likesPosts(req, res){
-    const { postId } = req.body;
+    const { postId, like } = req.body;
 
     const { authorization } = req.headers;
     const token = authorization?.replace('Bearer ', '');
@@ -18,9 +18,12 @@ export async function likesPosts(req, res){
         if (postExists.rowCount === 0) return res.status(401).send("Post não existe");
 
         const checkLike = await checkLikeDB(userId, postId);
-        if (checkLike.rowCount !== 0) return res.status(401).send("Já deu like neste post.");
+        if (checkLike.rowCount !== 0) {
+            await insertTrueFalseDB(like, userId, postId);
+            return res.send("Like Atualizado")
+        }
 
-        await likePostDB(userId, postId);
+        await likePostDB(like, userId, postId);
 
         res.send("Like")
     } catch (err) {
@@ -67,7 +70,7 @@ export async function myLikessId(req, res){
         const userId = Jwt.verify(token, process.env.JWT_SECRET);
         const checkMyLikes = await checkLikesUserDB(userId);
 
-        if (checkMyLikes.rows[0].postsIds === null) return res.status(404).send("Usuário não deu nenhum like.")
+        // if (checkMyLikes.rows[0].postsIds === null) return res.status(404).send("Usuário não deu nenhum like.")
 
         res.send(checkMyLikes.rows[0].postsIds)
     } catch (err) {

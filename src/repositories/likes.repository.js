@@ -5,11 +5,11 @@ export function tokenExistsDB(token){
     return result;
 }
 
-export function likePostDB(userId, postId){
+export function likePostDB(like, userId, postId){
     const result = db.query(`
-    INSERT INTO likes ("userId", "postId")
-    VALUES ($1, $2)
-    ;`, [userId.idUser, postId]);
+    INSERT INTO likes ("like", "userId", "postId")
+    VALUES ($1, $2, $3)
+    ;`, [like, userId.idUser, postId]);
     return result;
 }
 
@@ -25,6 +25,14 @@ export function checkLikeDB(userId, postId){
     return result;
 }
 
+export function insertTrueFalseDB(like, userId, postId){
+    const result = db.query(`
+    UPDATE likes
+    SET "like" = $1
+    WHERE "userId" = $2 AND "postId" = $3;`, [like, userId.idUser, postId]);
+    return result;
+}
+
 export function dislikePostDB(userId, postId){
     const result = db.query(`DELETE FROM likes WHERE "userId" = $1 AND "postId" = $2;`,
     [userId.idUser, postId]);
@@ -36,7 +44,7 @@ export function checkLikesUserDB(userId){
     SELECT
         ARRAY_AGG(DISTINCT likes."postId") AS "postsIds"
         FROM likes
-        WHERE "userId" = $1
-    ;`, [userId.idUser]);
+        WHERE "userId" = $1 AND "like" = $2
+    ;`, [userId.idUser, true]);
     return result;
 }
