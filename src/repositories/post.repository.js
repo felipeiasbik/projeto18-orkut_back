@@ -118,7 +118,7 @@ export function myPostsIdDB(id){
                     'comment', c."comment",
                     'userName', u.name,
                     'userPhoto', u.photo
-                )
+                )ORDER BY c."createdAt" DESC
             ) AS comments
         FROM user_posts p
         LEFT JOIN "comments" c ON p.post_id = c."postId"
@@ -182,7 +182,7 @@ export function listPostsDB(){
                 'comment', c."comment",
                 'userName', (SELECT name FROM users WHERE id = c."userId"),
                 'userPhoto', (SELECT photo FROM users WHERE id = c."userId")
-            )
+            ) ORDER BY c."createdAt" DESC
         ) AS "comments"
     FROM post p
     JOIN users u ON u.id = p."userId"
