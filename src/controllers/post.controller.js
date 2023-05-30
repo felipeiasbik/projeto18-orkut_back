@@ -1,4 +1,4 @@
-import { listPostsDB, myPostsDB, myPostsIdDB, myPostsIdUserDB, postImageDB, tokenExistsDB } from "../repositories/post.repository.js";
+import { lastModifiedAtDB, listPostsDB, myPostsDB, myPostsIdDB, myPostsIdUserDB, postImageDB, tokenExistsDB } from "../repositories/post.repository.js";
 import Jwt from "jsonwebtoken";
 
 export async function postImage(req, res){
@@ -53,6 +53,7 @@ export async function myPostId(req, res){
         let postsUser = await myPostsIdDB(id);
         if (postsUser.rowCount === 0) {
             postsUser = await myPostsIdUserDB(id);
+            await lastModifiedAtDB(userId);
         }
         // return res.status(400).send("Postagem não pertence ao usuário ou não existe.")
 
@@ -76,6 +77,7 @@ export async function timeLine(req, res){
         let listPosts; 
         if (userId) {
             listPosts = await listPostsDB();
+            await lastModifiedAtDB(userId);
         }
 
         res.send(listPosts.rows);
