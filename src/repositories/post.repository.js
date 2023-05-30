@@ -77,6 +77,13 @@ export function myPostsDB(userId){
     return result;
 }
 
+export function lastModifiedAtDB(id){
+    const result = db.query(`
+    UPDATE likes SET lastmodifiedat = NOW() WHERE "userId" = $1;
+    `, [id]);
+    return result;
+}
+
 export function myPostsIdDB(id){
 
     const result = db.query(`
@@ -102,7 +109,7 @@ export function myPostsIdDB(id){
                     'id', u.id, 
                     'name', u.name
                     ) 
-                    ORDER BY l."createdAt" ASC
+                    ORDER BY l."lastmodifiedat" ASC
             ) AS likes
         FROM user_posts p
         LEFT JOIN likes l ON p.post_id = l."postId"
@@ -171,7 +178,7 @@ export function listPostsDB(){
                 JSON_BUILD_OBJECT(
                     'id', u2.id, 
                     'name', u2.name
-                    ) ORDER BY l."createdAt" ASC
+                    ) ORDER BY l."lastmodifiedat" ASC
                 )
             FROM likes l
             JOIN users u2 ON u2.id = l."userId"
