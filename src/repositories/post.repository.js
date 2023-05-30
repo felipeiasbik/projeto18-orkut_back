@@ -101,11 +101,13 @@ export function myPostsIdDB(id){
                 JSON_BUILD_OBJECT(
                     'id', u.id, 
                     'name', u.name
-                    ) ORDER BY l."createdAt" ASC
+                    ) 
+                    ORDER BY l."createdAt" ASC
             ) AS likes
         FROM user_posts p
         LEFT JOIN likes l ON p.post_id = l."postId"
         JOIN users u ON l."userId" = u.id
+        WHERE l."like" = $2
         GROUP BY p.post_id
     ),
     post_comments AS (
@@ -145,7 +147,7 @@ export function myPostsIdDB(id){
     LEFT JOIN post_comments pc ON up.post_id = pc.post_id
     GROUP BY up.id, up.name, up.photo, up.biography
     ORDER BY MAX(up.post_createdAt) DESC;
-    `, [id]);
+    `, [id, true]);
     return result;
 }
 
@@ -173,7 +175,7 @@ export function listPostsDB(){
                 )
             FROM likes l
             JOIN users u2 ON u2.id = l."userId"
-            WHERE l."postId" = p.id
+            WHERE l."postId" = p.id AND l."like" = $1
         ) AS "likes",
         JSON_AGG(
             JSON_BUILD_OBJECT(
@@ -189,6 +191,6 @@ export function listPostsDB(){
     LEFT JOIN "comments" c ON c."postId" = p.id
     GROUP BY p.id, u.id
     ORDER BY p."createdAt" DESC;
-    `);
+    `, [true]);
     return result;
 }
